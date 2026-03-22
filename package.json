@@ -1,0 +1,14 @@
+{
+  "name": "@techknowmad/phyloid-engine",
+  "version": "0.1.0",
+  "description": "PEP-003 evolution engine — organism selection, crossover, mutation with paradigm judges",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  },
+  "keywords": ["evolution", "genetic-algorithm", "paradigm", "phyloid"],
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  }
+}
