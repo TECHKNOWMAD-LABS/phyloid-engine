@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: pip install pytest pytest-cov hypothesis ruff
+      - name: Lint with ruff
+        run: ruff check python/ tests/
+      - name: Run tests
+        run: pytest -v --tb=short --cov=python/phyloid_engine --cov-report=term-missing
+        env:
+          PYTHONPATH: python
+
+  javascript:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ["22"]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Run tests
+        run: node --test test/*.test.js
