@@ -6,13 +6,17 @@ from .prng import Mulberry32
 
 
 class Organism:
+    """Container for a genome, fitness score, age, and metadata."""
+
     def __init__(self, genome: list[float] | None = None, fitness: float = 0) -> None:
+        """Create an organism with the given genome and fitness."""
         self.genome: list[float] = list(genome) if genome else []
         self.fitness = fitness
         self.age = 0
         self.meta: dict[str, Any] = {}
 
     def clone(self) -> Organism:
+        """Return an independent deep copy of this organism."""
         copy = Organism(list(self.genome), self.fitness)
         copy.age = self.age
         copy.meta = dict(self.meta)
@@ -32,6 +36,7 @@ class Organism:
         self.genome[index] = value
 
     def to_dict(self) -> dict[str, Any]:
+        """Serialize to a plain dict for JSON storage."""
         return {
             "genome": self.genome,
             "fitness": self.fitness,
@@ -41,6 +46,7 @@ class Organism:
 
     @classmethod
     def from_dict(cls, obj: dict[str, Any]) -> Organism:
+        """Deserialize from a dict (inverse of to_dict)."""
         if not isinstance(obj, dict):
             raise TypeError(f"expected dict, got {type(obj).__name__}")
         if "genome" not in obj or "fitness" not in obj:
@@ -58,6 +64,7 @@ class Organism:
         gene_min: float = 0,
         gene_max: float = 1,
     ) -> Organism:
+        """Create a random organism with genes uniformly distributed in [gene_min, gene_max]."""
         if length < 0:
             raise ValueError(f"length must be non-negative, got {length}")
         if gene_max < gene_min:

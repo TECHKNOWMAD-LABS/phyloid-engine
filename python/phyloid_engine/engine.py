@@ -27,6 +27,8 @@ DEFAULTS: dict[str, Any] = {
 
 
 class EvolutionEngine(EventEmitter):
+    """Main evolution orchestrator with configurable operators and event hooks."""
+
     def __init__(self, config: dict[str, Any] | None = None) -> None:
         super().__init__()
         self.config = {**DEFAULTS, **(config or {})}
@@ -57,6 +59,7 @@ class EvolutionEngine(EventEmitter):
         )
 
     def initialize(self) -> EvolutionEngine:
+        """Create the initial random population and evaluate fitness."""
         self.population = []
         for _ in range(self.config["population_size"]):
             self.population.append(
@@ -86,6 +89,7 @@ class EvolutionEngine(EventEmitter):
             self.best_organism = current_best.clone()
 
     def step(self) -> dict[str, Any]:
+        """Run one generation of selection, crossover, mutation, and evaluation."""
         cfg = self.config
         elite_count = cfg["elite_count"]
         crossover_rate = cfg["crossover_rate"]
@@ -153,6 +157,7 @@ class EvolutionEngine(EventEmitter):
         }
 
     def run(self) -> dict[str, Any]:
+        """Run evolution until max_generations or target_fitness is reached."""
         if not self.population:
             self.initialize()
 

@@ -7,6 +7,7 @@ from .prng import Mulberry32
 def single_point_crossover(
     parent_a: Organism, parent_b: Organism, rng: Mulberry32
 ) -> tuple[Organism, Organism]:
+    """Split genomes at a random point and swap tails. Returns two children."""
     length = min(parent_a.size(), parent_b.size())
     if length < 2:
         raise ValueError(f"parents must have at least 2 genes for crossover, got {length}")
@@ -19,6 +20,7 @@ def single_point_crossover(
 def two_point_crossover(
     parent_a: Organism, parent_b: Organism, rng: Mulberry32
 ) -> tuple[Organism, Organism]:
+    """Swap the middle segment between two random points. Returns two children."""
     length = min(parent_a.size(), parent_b.size())
     if length < 2:
         raise ValueError(f"parents must have at least 2 genes for crossover, got {length}")
@@ -40,6 +42,7 @@ def two_point_crossover(
 def uniform_crossover(
     parent_a: Organism, parent_b: Organism, rng: Mulberry32, swap_prob: float = 0.5
 ) -> tuple[Organism, Organism]:
+    """Swap each gene independently with the given probability. Returns two children."""
     length = min(parent_a.size(), parent_b.size())
     genome_a: list[float] = []
     genome_b: list[float] = []

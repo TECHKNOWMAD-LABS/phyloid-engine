@@ -4,6 +4,8 @@ from typing import Any, Callable
 
 
 class EventEmitter:
+    """Pub/sub event bus with wildcard support and chainable API."""
+
     def __init__(self) -> None:
         self._listeners: dict[str, list[Callable[..., Any]]] = {}
         self._once: set[Callable[..., Any]] = set()

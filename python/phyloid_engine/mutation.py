@@ -9,6 +9,7 @@ from .prng import Mulberry32
 def bit_flip_mutation(
     organism: Organism, rng: Mulberry32, rate: float = 0.01
 ) -> Organism:
+    """Flip each gene (1-x) with the given probability. Returns a new organism."""
     child = organism.clone()
     for i in range(child.size()):
         if rng.next() < rate:
@@ -19,6 +20,7 @@ def bit_flip_mutation(
 def swap_mutation(
     organism: Organism, rng: Mulberry32, rate: float = 0.01
 ) -> Organism:
+    """Swap pairs of genes with the given probability. Returns a new organism."""
     child = organism.clone()
     for i in range(child.size()):
         if rng.next() < rate:
@@ -37,6 +39,7 @@ def gaussian_mutation(
     min_val: float = float("-inf"),
     max_val: float = float("inf"),
 ) -> Organism:
+    """Add Gaussian noise to genes, clamped to [min_val, max_val]. Returns a new organism."""
     child = organism.clone()
     for i in range(child.size()):
         if rng.next() < rate:

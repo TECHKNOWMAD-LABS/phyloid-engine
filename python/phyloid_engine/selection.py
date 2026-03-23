@@ -7,6 +7,7 @@ from .prng import Mulberry32
 def tournament_selection(
     population: list[Organism], rng: Mulberry32, tournament_size: int = 3
 ) -> Organism:
+    """Select the fittest organism from a random subset of the population."""
     if not population:
         raise ValueError("population must not be empty")
     if tournament_size < 1:
@@ -22,6 +23,7 @@ def tournament_selection(
 
 
 def roulette_selection(population: list[Organism], rng: Mulberry32) -> Organism:
+    """Select an organism with probability proportional to fitness."""
     if not population:
         raise ValueError("population must not be empty")
     min_fitness = min(o.fitness for o in population)
@@ -38,6 +40,7 @@ def roulette_selection(population: list[Organism], rng: Mulberry32) -> Organism:
 
 
 def rank_selection(population: list[Organism], rng: Mulberry32) -> Organism:
+    """Select an organism with probability proportional to fitness rank."""
     if not population:
         raise ValueError("population must not be empty")
     sorted_pop = sorted(population, key=lambda o: o.fitness)
@@ -52,5 +55,6 @@ def rank_selection(population: list[Organism], rng: Mulberry32) -> Organism:
 
 
 def elite_selection(population: list[Organism], count: int) -> list[Organism]:
+    """Return the top N organisms sorted by fitness descending."""
     sorted_pop = sorted(population, key=lambda o: o.fitness, reverse=True)
     return sorted_pop[:count]

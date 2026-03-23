@@ -6,6 +6,8 @@ from .organism import Organism
 
 
 class ParadigmJudge:
+    """Single-objective fitness function with a name and weight."""
+
     def __init__(
         self, name: str, evaluate_fn: Callable[[Organism], float], weight: float = 1.0
     ) -> None:
@@ -18,6 +20,8 @@ class ParadigmJudge:
 
 
 class ParadigmPanel:
+    """Multi-objective fitness aggregator using weighted judges."""
+
     def __init__(self) -> None:
         self._judges: list[ParadigmJudge] = []
 
