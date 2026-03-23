@@ -8,6 +8,9 @@ version = "0.1.0"
 description = "PEP-003 evolution engine — organism selection, crossover, mutation with paradigm judges"
 license = "MIT"
 requires-python = ">=3.12"
+authors = [
+    {name = "TechKnowMad Labs", email = "admin@techknowmad.ai"},
+]
 
 [tool.setuptools.packages.find]
 where = ["python"]
