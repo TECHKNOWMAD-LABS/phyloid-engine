@@ -81,40 +81,47 @@ class EvolutionEngine(EventEmitter):
         self._update_best()
 
     def _update_best(self) -> None:
-        for org in self.population:
-            if self.best_organism is None or org.fitness > self.best_organism.fitness:
-                self.best_organism = org.clone()
+        current_best = max(self.population, key=lambda o: o.fitness)
+        if self.best_organism is None or current_best.fitness > self.best_organism.fitness:
+            self.best_organism = current_best.clone()
 
     def step(self) -> dict[str, Any]:
-        elite_count = self.config["elite_count"]
-        crossover_rate = self.config["crossover_rate"]
-        mutation_rate = self.config["mutation_rate"]
-        mutation_sigma = self.config["mutation_sigma"]
-        tournament_size = self.config["tournament_size"]
+        cfg = self.config
+        elite_count = cfg["elite_count"]
+        crossover_rate = cfg["crossover_rate"]
+        mutation_rate = cfg["mutation_rate"]
+        mutation_sigma = cfg["mutation_sigma"]
+        tournament_size = cfg["tournament_size"]
+        pop_size = cfg["population_size"]
+        gene_min = cfg["gene_min"]
+        gene_max = cfg["gene_max"]
+        select = self._select_fn
+        crossover = self._crossover_fn
+        mutate = self._mutate_fn
+        rng = self.rng
+        population = self.population
 
+        # Pre-allocate with elites
         next_pop: list[Organism] = []
-
-        elites = elite_selection(self.population, elite_count)
+        elites = elite_selection(population, elite_count)
         for e in elites:
             c = e.clone()
             c.age = e.age + 1
             next_pop.append(c)
 
-        while len(next_pop) < self.config["population_size"]:
-            parent_a = self._select_fn(self.population, self.rng, tournament_size)
-            parent_b = self._select_fn(self.population, self.rng, tournament_size)
+        # Fill remaining via selection + crossover + mutation
+        while len(next_pop) < pop_size:
+            parent_a = select(population, rng, tournament_size)
+            parent_b = select(population, rng, tournament_size)
 
-            if self.rng.next() < crossover_rate:
-                children = self._crossover_fn(parent_a, parent_b, self.rng)
+            if rng.next() < crossover_rate:
+                children = crossover(parent_a, parent_b, rng)
             else:
                 children = (parent_a.clone(), parent_b.clone())
 
             for child in children:
-                child = self._mutate_fn(
-                    child, self.rng, mutation_rate, mutation_sigma,
-                    self.config["gene_min"], self.config["gene_max"],
-                )
-                if len(next_pop) < self.config["population_size"]:
+                child = mutate(child, rng, mutation_rate, mutation_sigma, gene_min, gene_max)
+                if len(next_pop) < pop_size:
                     next_pop.append(child)
 
         self.population = next_pop
@@ -128,11 +135,20 @@ class EvolutionEngine(EventEmitter):
 
     def _gen_stats(self) -> dict[str, Any]:
         fitnesses = [o.fitness for o in self.population]
+        best_f = fitnesses[0]
+        worst_f = fitnesses[0]
+        total = 0.0
+        for f in fitnesses:
+            if f > best_f:
+                best_f = f
+            if f < worst_f:
+                worst_f = f
+            total += f
         return {
             "generation": self.generation,
-            "best": max(fitnesses),
-            "worst": min(fitnesses),
-            "average": sum(fitnesses) / len(fitnesses),
+            "best": best_f,
+            "worst": worst_f,
+            "average": total / len(fitnesses),
             "best_organism": self.best_organism.clone() if self.best_organism else None,
         }
 
