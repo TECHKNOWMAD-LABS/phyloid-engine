@@ -30,6 +30,12 @@ class EvolutionEngine(EventEmitter):
     def __init__(self, config: dict[str, Any] | None = None) -> None:
         super().__init__()
         self.config = {**DEFAULTS, **(config or {})}
+        if self.config["population_size"] < 2:
+            raise ValueError("population_size must be >= 2")
+        if self.config["genome_length"] < 2:
+            raise ValueError("genome_length must be >= 2 for crossover")
+        if self.config["elite_count"] >= self.config["population_size"]:
+            raise ValueError("elite_count must be less than population_size")
         self.rng = Mulberry32(self.config["seed"])
         self.panel = ParadigmPanel()
         self.population: list[Organism] = []

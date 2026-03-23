@@ -23,7 +23,9 @@ def _imul(a: int, b: int) -> int:
 
 class Mulberry32:
     def __init__(self, seed: int) -> None:
-        self._initial = _to_u32(seed)
+        if not isinstance(seed, (int, float)):
+            raise TypeError(f"seed must be a number, got {type(seed).__name__}")
+        self._initial = _to_u32(int(seed))
         self._state = self._initial
 
     def next(self) -> float:
@@ -37,6 +39,8 @@ class Mulberry32:
         return _to_u32(t ^ _to_i32(_to_u32(t) >> 14)) / 4294967296
 
     def next_int(self, min_val: int, max_val: int) -> int:
+        if max_val <= min_val:
+            raise ValueError(f"max_val ({max_val}) must be greater than min_val ({min_val})")
         return min_val + math.floor(self.next() * (max_val - min_val))
 
     def reset(self) -> None:

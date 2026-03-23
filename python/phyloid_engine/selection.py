@@ -7,6 +7,10 @@ from .prng import Mulberry32
 def tournament_selection(
     population: list[Organism], rng: Mulberry32, tournament_size: int = 3
 ) -> Organism:
+    if not population:
+        raise ValueError("population must not be empty")
+    if tournament_size < 1:
+        raise ValueError(f"tournament_size must be >= 1, got {tournament_size}")
     best: Organism | None = None
     for _ in range(tournament_size):
         idx = rng.next_int(0, len(population))
@@ -18,6 +22,8 @@ def tournament_selection(
 
 
 def roulette_selection(population: list[Organism], rng: Mulberry32) -> Organism:
+    if not population:
+        raise ValueError("population must not be empty")
     min_fitness = min(o.fitness for o in population)
     offset = -min_fitness if min_fitness < 0 else 0
     total_fitness = sum(o.fitness + offset for o in population)
@@ -32,6 +38,8 @@ def roulette_selection(population: list[Organism], rng: Mulberry32) -> Organism:
 
 
 def rank_selection(population: list[Organism], rng: Mulberry32) -> Organism:
+    if not population:
+        raise ValueError("population must not be empty")
     sorted_pop = sorted(population, key=lambda o: o.fitness)
     n = len(sorted_pop)
     total_rank = n * (n + 1) // 2
