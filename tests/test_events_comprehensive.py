@@ -1,9 +1,8 @@
 """Comprehensive tests for EventEmitter."""
 
 import sys
-sys.path.insert(0, "python")
 
-from phyloid_engine.events import EventEmitter
+sys.path.insert(0, "python")
 
 
 class TestEventEmitterOn:
@@ -55,7 +54,10 @@ class TestEventEmitterOnce:
 class TestEventEmitterOff:
     def test_remove_specific_listener(self, emitter):
         received = []
-        fn = lambda d: received.append(d)
+
+        def fn(d):
+            return received.append(d)
+
         emitter.on("e", fn)
         emitter.off("e", fn)
         emitter.emit("e", 1)
@@ -105,7 +107,9 @@ class TestEventEmitterListenerCount:
         assert emitter.listener_count("e") == 2
 
     def test_count_after_off(self, emitter):
-        fn = lambda: None
+        def fn():
+            return None
+
         emitter.on("e", fn)
         emitter.off("e", fn)
         assert emitter.listener_count("e") == 0

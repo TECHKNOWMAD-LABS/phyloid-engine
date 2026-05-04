@@ -1,24 +1,26 @@
 """Property-based tests using Hypothesis for core invariants."""
 
 import sys
+
 sys.path.insert(0, "python")
 
-from hypothesis import given, settings, assume
+from hypothesis import given, settings
 from hypothesis import strategies as st
 
 from phyloid_engine.prng import Mulberry32
 from phyloid_engine.organism import Organism
-from phyloid_engine.selection import tournament_selection, roulette_selection, elite_selection
+from phyloid_engine.selection import tournament_selection, elite_selection
 from phyloid_engine.mutation import bit_flip_mutation, swap_mutation, gaussian_mutation
-from phyloid_engine.crossover import single_point_crossover, two_point_crossover, uniform_crossover
-from phyloid_engine.paradigm import ParadigmJudge, ParadigmPanel
+from phyloid_engine.crossover import single_point_crossover, uniform_crossover
 from phyloid_engine.engine import EvolutionEngine
 
 
 # -- Strategies --
 
 seeds = st.integers(min_value=0, max_value=0xFFFFFFFF)
-genome_values = st.floats(min_value=-100, max_value=100, allow_nan=False, allow_infinity=False)
+genome_values = st.floats(
+    min_value=-100, max_value=100, allow_nan=False, allow_infinity=False
+)
 genomes = st.lists(genome_values, min_size=2, max_size=50)
 rates = st.floats(min_value=0.0, max_value=1.0)
 
@@ -192,26 +194,30 @@ class TestEngineProperties:
     @given(seed=seeds)
     @settings(max_examples=10, deadline=10000)
     def test_population_size_invariant(self, seed):
-        engine = EvolutionEngine({
-            "population_size": 20,
-            "genome_length": 5,
-            "max_generations": 5,
-            "seed": seed,
-            "fitness_fn": lambda o: sum(o.genome),
-        })
+        engine = EvolutionEngine(
+            {
+                "population_size": 20,
+                "genome_length": 5,
+                "max_generations": 5,
+                "seed": seed,
+                "fitness_fn": lambda o: sum(o.genome),
+            }
+        )
         engine.run()
         assert len(engine.population) == 20
 
     @given(seed=seeds)
     @settings(max_examples=10, deadline=10000)
     def test_best_organism_is_best(self, seed):
-        engine = EvolutionEngine({
-            "population_size": 20,
-            "genome_length": 5,
-            "max_generations": 10,
-            "seed": seed,
-            "fitness_fn": lambda o: sum(o.genome),
-        })
+        engine = EvolutionEngine(
+            {
+                "population_size": 20,
+                "genome_length": 5,
+                "max_generations": 10,
+                "seed": seed,
+                "fitness_fn": lambda o: sum(o.genome),
+            }
+        )
         result = engine.run()
         # Best organism should be >= any current population member
         best = result["best"]

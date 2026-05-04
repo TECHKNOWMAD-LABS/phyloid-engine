@@ -1,6 +1,7 @@
 """Comprehensive tests for Mulberry32 PRNG."""
 
 import sys
+
 sys.path.insert(0, "python")
 
 from phyloid_engine.prng import Mulberry32, _to_u32, _to_i32, _imul

@@ -32,15 +32,27 @@ class Mulberry32:
         self._state = _to_u32(self._state + 0x6D2B79F5)
         t = _to_i32(self._state)
         t = _imul(t ^ _to_i32(_to_u32(t) >> 15), _to_i32(1 | _to_u32(t)))
-        t = _to_i32(_to_u32(_to_i32(_to_u32(t) + _to_u32(_imul(
-            _to_i32(_to_u32(t) ^ _to_i32(_to_u32(t) >> 7)),
-            _to_i32(61 | _to_u32(t))
-        )))) ^ _to_u32(t))
+        t = _to_i32(
+            _to_u32(
+                _to_i32(
+                    _to_u32(t)
+                    + _to_u32(
+                        _imul(
+                            _to_i32(_to_u32(t) ^ _to_i32(_to_u32(t) >> 7)),
+                            _to_i32(61 | _to_u32(t)),
+                        )
+                    )
+                )
+            )
+            ^ _to_u32(t)
+        )
         return _to_u32(t ^ _to_i32(_to_u32(t) >> 14)) / 4294967296
 
     def next_int(self, min_val: int, max_val: int) -> int:
         if max_val <= min_val:
-            raise ValueError(f"max_val ({max_val}) must be greater than min_val ({min_val})")
+            raise ValueError(
+                f"max_val ({max_val}) must be greater than min_val ({min_val})"
+            )
         return min_val + math.floor(self.next() * (max_val - min_val))
 
     def reset(self) -> None:

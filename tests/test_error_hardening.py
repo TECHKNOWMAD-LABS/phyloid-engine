@@ -1,6 +1,7 @@
 """Tests for input validation and error hardening."""
 
 import sys
+
 sys.path.insert(0, "python")
 
 import pytest

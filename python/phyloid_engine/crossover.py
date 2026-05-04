@@ -10,7 +10,9 @@ def single_point_crossover(
     """Split genomes at a random point and swap tails. Returns two children."""
     length = min(parent_a.size(), parent_b.size())
     if length < 2:
-        raise ValueError(f"parents must have at least 2 genes for crossover, got {length}")
+        raise ValueError(
+            f"parents must have at least 2 genes for crossover, got {length}"
+        )
     point = rng.next_int(1, length)
     child_a = Organism(parent_a.genome[:point] + parent_b.genome[point:])
     child_b = Organism(parent_b.genome[:point] + parent_a.genome[point:])
@@ -23,7 +25,9 @@ def two_point_crossover(
     """Swap the middle segment between two random points. Returns two children."""
     length = min(parent_a.size(), parent_b.size())
     if length < 2:
-        raise ValueError(f"parents must have at least 2 genes for crossover, got {length}")
+        raise ValueError(
+            f"parents must have at least 2 genes for crossover, got {length}"
+        )
     p1 = rng.next_int(1, length)
     p2 = rng.next_int(1, length)
     if p1 > p2:

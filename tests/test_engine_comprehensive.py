@@ -1,14 +1,14 @@
 """Comprehensive tests for EvolutionEngine."""
 
 import sys
+
 sys.path.insert(0, "python")
 
 from phyloid_engine.engine import EvolutionEngine, DEFAULTS
 from phyloid_engine.paradigm import ParadigmJudge
 from phyloid_engine.organism import Organism
-from phyloid_engine.selection import roulette_selection, rank_selection
-from phyloid_engine.crossover import two_point_crossover, uniform_crossover
-from phyloid_engine.mutation import bit_flip_mutation, swap_mutation
+from phyloid_engine.selection import roulette_selection
+from phyloid_engine.crossover import two_point_crossover
 
 
 class TestEngineDefaults:
@@ -90,36 +90,42 @@ class TestEngineRun:
         assert isinstance(result["best"], Organism)
 
     def test_auto_initializes(self):
-        engine = EvolutionEngine({
-            "population_size": 10,
-            "genome_length": 4,
-            "max_generations": 3,
-            "seed": 42,
-            "fitness_fn": lambda o: sum(o.genome),
-        })
+        engine = EvolutionEngine(
+            {
+                "population_size": 10,
+                "genome_length": 4,
+                "max_generations": 3,
+                "seed": 42,
+                "fitness_fn": lambda o: sum(o.genome),
+            }
+        )
         result = engine.run()
         assert result["generations"] == 3
 
     def test_stops_at_target_fitness(self):
-        engine = EvolutionEngine({
-            "population_size": 20,
-            "genome_length": 4,
-            "max_generations": 1000,
-            "seed": 42,
-            "target_fitness": 0.01,  # Very low target, should hit quickly
-            "fitness_fn": lambda o: sum(o.genome),
-        })
+        engine = EvolutionEngine(
+            {
+                "population_size": 20,
+                "genome_length": 4,
+                "max_generations": 1000,
+                "seed": 42,
+                "target_fitness": 0.01,  # Very low target, should hit quickly
+                "fitness_fn": lambda o: sum(o.genome),
+            }
+        )
         result = engine.run()
         assert result["generations"] < 1000
 
     def test_emits_started_and_completed(self):
-        engine = EvolutionEngine({
-            "population_size": 10,
-            "genome_length": 4,
-            "max_generations": 2,
-            "seed": 42,
-            "fitness_fn": lambda o: sum(o.genome),
-        })
+        engine = EvolutionEngine(
+            {
+                "population_size": 10,
+                "genome_length": 4,
+                "max_generations": 2,
+                "seed": 42,
+                "fitness_fn": lambda o: sum(o.genome),
+            }
+        )
         events = []
         engine.on("started", lambda d: events.append("started"))
         engine.on("completed", lambda d: events.append("completed"))
@@ -165,49 +171,57 @@ class TestEngineCustomFunctions:
         def roulette_wrapper(pop, rng, _tournament_size=3):
             return roulette_selection(pop, rng)
 
-        engine = EvolutionEngine({
-            "population_size": 10,
-            "genome_length": 4,
-            "max_generations": 3,
-            "seed": 42,
-            "fitness_fn": lambda o: sum(o.genome),
-            "select_fn": roulette_wrapper,
-        })
+        engine = EvolutionEngine(
+            {
+                "population_size": 10,
+                "genome_length": 4,
+                "max_generations": 3,
+                "seed": 42,
+                "fitness_fn": lambda o: sum(o.genome),
+                "select_fn": roulette_wrapper,
+            }
+        )
         result = engine.run()
         assert result["generations"] == 3
 
     def test_custom_crossover(self):
-        engine = EvolutionEngine({
-            "population_size": 10,
-            "genome_length": 6,
-            "max_generations": 3,
-            "seed": 42,
-            "fitness_fn": lambda o: sum(o.genome),
-            "crossover_fn": two_point_crossover,
-        })
+        engine = EvolutionEngine(
+            {
+                "population_size": 10,
+                "genome_length": 6,
+                "max_generations": 3,
+                "seed": 42,
+                "fitness_fn": lambda o: sum(o.genome),
+                "crossover_fn": two_point_crossover,
+            }
+        )
         result = engine.run()
         assert result["generations"] == 3
 
 
 class TestEngineParadigm:
     def test_paradigm_panel_integration(self):
-        engine = EvolutionEngine({
-            "population_size": 10,
-            "genome_length": 3,
-            "max_generations": 3,
-            "seed": 42,
-        })
+        engine = EvolutionEngine(
+            {
+                "population_size": 10,
+                "genome_length": 3,
+                "max_generations": 3,
+                "seed": 42,
+            }
+        )
         engine.panel.add_judge(ParadigmJudge("sum", lambda o: sum(o.genome)))
         result = engine.run()
         assert result["best"].fitness > 0
 
     def test_multi_judge_panel(self):
-        engine = EvolutionEngine({
-            "population_size": 10,
-            "genome_length": 3,
-            "max_generations": 3,
-            "seed": 42,
-        })
+        engine = EvolutionEngine(
+            {
+                "population_size": 10,
+                "genome_length": 3,
+                "max_generations": 3,
+                "seed": 42,
+            }
+        )
         engine.panel.add_judge(ParadigmJudge("sum", lambda o: sum(o.genome), weight=1))
         engine.panel.add_judge(ParadigmJudge("max", lambda o: max(o.genome), weight=2))
         result = engine.run()
