@@ -1,6 +1,7 @@
 """Comprehensive tests for ParadigmJudge and ParadigmPanel."""
 
 import sys
+
 sys.path.insert(0, "python")
 
 from phyloid_engine.organism import Organism

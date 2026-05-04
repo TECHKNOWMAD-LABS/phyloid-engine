@@ -46,10 +46,14 @@ class EvolutionEngine(EventEmitter):
         self.stats: dict[str, Any] = {"generation_history": []}
 
         self._select_fn: Callable[..., Organism] = (
-            config.get("select_fn", tournament_selection) if config else tournament_selection
+            config.get("select_fn", tournament_selection)
+            if config
+            else tournament_selection
         )
         self._crossover_fn = (
-            config.get("crossover_fn", single_point_crossover) if config else single_point_crossover
+            config.get("crossover_fn", single_point_crossover)
+            if config
+            else single_point_crossover
         )
         self._mutate_fn = (
             config.get("mutate_fn", gaussian_mutation) if config else gaussian_mutation
@@ -85,7 +89,10 @@ class EvolutionEngine(EventEmitter):
 
     def _update_best(self) -> None:
         current_best = max(self.population, key=lambda o: o.fitness)
-        if self.best_organism is None or current_best.fitness > self.best_organism.fitness:
+        if (
+            self.best_organism is None
+            or current_best.fitness > self.best_organism.fitness
+        ):
             self.best_organism = current_best.clone()
 
     def step(self) -> dict[str, Any]:
@@ -124,7 +131,9 @@ class EvolutionEngine(EventEmitter):
                 children = (parent_a.clone(), parent_b.clone())
 
             for child in children:
-                child = mutate(child, rng, mutation_rate, mutation_sigma, gene_min, gene_max)
+                child = mutate(
+                    child, rng, mutation_rate, mutation_sigma, gene_min, gene_max
+                )
                 if len(next_pop) < pop_size:
                     next_pop.append(child)
 

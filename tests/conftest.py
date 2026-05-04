@@ -72,13 +72,15 @@ def panel_with_judges():
 @pytest.fixture
 def small_engine():
     """Small EvolutionEngine for quick tests."""
-    return EvolutionEngine({
-        "population_size": 10,
-        "genome_length": 4,
-        "max_generations": 5,
-        "seed": 42,
-        "fitness_fn": lambda o: sum(o.genome),
-    })
+    return EvolutionEngine(
+        {
+            "population_size": 10,
+            "genome_length": 4,
+            "max_generations": 5,
+            "seed": 42,
+            "fitness_fn": lambda o: sum(o.genome),
+        }
+    )
 
 
 def make_organisms(n, genome_len=5, fitness_fn=None):

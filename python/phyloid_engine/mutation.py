@@ -17,9 +17,7 @@ def bit_flip_mutation(
     return child
 
 
-def swap_mutation(
-    organism: Organism, rng: Mulberry32, rate: float = 0.01
-) -> Organism:
+def swap_mutation(organism: Organism, rng: Mulberry32, rate: float = 0.01) -> Organism:
     """Swap pairs of genes with the given probability. Returns a new organism."""
     child = organism.clone()
     for i in range(child.size()):

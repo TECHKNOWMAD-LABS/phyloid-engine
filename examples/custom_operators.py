@@ -8,6 +8,7 @@ Demonstrates:
 """
 
 import sys
+
 sys.path.insert(0, "python")
 
 from phyloid_engine import (
@@ -38,26 +39,31 @@ def pattern_fitness(o: Organism) -> float:
     return sum(1 for a, b in zip(o.genome, TARGET) if abs(a - b) < 0.3)
 
 
-engine = EvolutionEngine({
-    "population_size": 40,
-    "genome_length": 6,
-    "gene_min": 0,
-    "gene_max": 1,
-    "max_generations": 200,
-    "target_fitness": 6,  # All 6 genes match
-    "mutation_rate": 0.15,
-    "seed": 123,
-    "fitness_fn": pattern_fitness,
-    "select_fn": roulette_wrapper,
-    "crossover_fn": two_point_crossover,
-    "mutate_fn": swap_wrapper,
-})
+engine = EvolutionEngine(
+    {
+        "population_size": 40,
+        "genome_length": 6,
+        "gene_min": 0,
+        "gene_max": 1,
+        "max_generations": 200,
+        "target_fitness": 6,  # All 6 genes match
+        "mutation_rate": 0.15,
+        "seed": 123,
+        "fitness_fn": pattern_fitness,
+        "select_fn": roulette_wrapper,
+        "crossover_fn": two_point_crossover,
+        "mutate_fn": swap_wrapper,
+    }
+)
 
 # Track progress
-engine.on("target_reached", lambda s: print(f"\n  Target reached at generation {s['generation']}!"))
+engine.on(
+    "target_reached",
+    lambda s: print(f"\n  Target reached at generation {s['generation']}!"),
+)
 
 print(f"Evolving toward target pattern: {TARGET}")
-print(f"Operators: roulette selection, two-point crossover, swap mutation")
+print("Operators: roulette selection, two-point crossover, swap mutation")
 print("=" * 55)
 
 result = engine.run()
